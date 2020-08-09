@@ -3,6 +3,7 @@ package controller
 import (
 	"database/sql"
 	"encoding/json"
+	"github.com/sunil206b/items_api/logger"
 	"github.com/sunil206b/items_api/model"
 	"github.com/sunil206b/items_api/service"
 	"github.com/sunil206b/oauth_go/oauth"
@@ -34,12 +35,14 @@ func (c *itemController) CreateItem(res http.ResponseWriter, req *http.Request) 
 	}
 
 	var item model.Item
-	err := json.NewDecoder(req.Body).Decode(item)
+	err := json.NewDecoder(req.Body).Decode(&item)
 	if err != nil {
+		logger.Error("error when trying to marshal item", err)
 		errMsg := errors.NewBadRequest("Not a valid Item json")
 		http_utils.ResponseError(res, errMsg)
 		return
 	}
+	item.Seller = oauth.GetCallerId(req)
 	if errMsg := c.srv.CreateItem(&item); errMsg != nil {
 		http_utils.ResponseError(res, errMsg)
 		return
