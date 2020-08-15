@@ -3,14 +3,16 @@ package controller
 import (
 	"database/sql"
 	"encoding/json"
-	"github.com/sunil206b/items_api/logger"
+	"github.com/gorilla/mux"
+	"github.com/olivere/elastic"
 	"github.com/sunil206b/items_api/model"
 	"github.com/sunil206b/items_api/service"
 	"github.com/sunil206b/oauth_go/oauth"
 	"github.com/sunil206b/store_utils_go/errors"
 	"github.com/sunil206b/store_utils_go/http_utils"
+	"github.com/sunil206b/store_utils_go/logger"
 	"net/http"
-	"src/github.com/olivere/elastic"
+	"strings"
 )
 
 type itemController struct {
@@ -51,5 +53,44 @@ func (c *itemController) CreateItem(res http.ResponseWriter, req *http.Request) 
 }
 
 func (c *itemController) GetById(res http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	itemId := strings.TrimSpace(vars["item_id"])
+	item, err := c.srv.GetItem(itemId)
+	if err != nil {
+		http_utils.ResponseError(res, err)
+		return
+	}
+	http_utils.ResponseJson(res, http.StatusOK, item)
+}
 
+func (c *itemController) Search(res http.ResponseWriter, req *http.Request) {
+	var query model.EsQuery
+	err := json.NewDecoder(req.Body).Decode(&query)
+	if err != nil {
+		errMsg := errors.NewBadRequest("invalid json body")
+		http_utils.ResponseError(res, errMsg)
+		return
+	}
+	items, errMsg := c.srv.Search(query)
+	if errMsg != nil {
+		http_utils.ResponseError(res, errMsg)
+		return
+	}
+	http_utils.ResponseJson(res, http.StatusOK, items)
+}
+
+func (c *itemController) Delete(res http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	itemId := strings.TrimSpace(vars["item_id"])
+	if itemId == "" {
+		errMsg := errors.NewBadRequest("not a valid item id")
+		http_utils.ResponseError(res, errMsg)
+		return
+	}
+	msg, errMsg := c.srv.Delete(itemId)
+	if errMsg != nil {
+		http_utils.ResponseError(res, errMsg)
+		return
+	}
+	http_utils.ResponseJson(res, http.StatusOK, map[string]string{"item status": msg})
 }

@@ -3,7 +3,7 @@ package app
 import (
 	"database/sql"
 	"github.com/gorilla/mux"
-	"github.com/sunil206b/users_api/logger"
+	"github.com/sunil206b/store_utils_go/logger"
 	"net/http"
 	"time"
 )

@@ -1,8 +1,8 @@
 package driver
 
 import (
+	"github.com/olivere/elastic"
 	"github.com/sunil206b/store_utils_go/logger"
-	"src/github.com/olivere/elastic"
 	"time"
 )
 
