@@ -2,7 +2,7 @@ package repo
 
 import (
 	"database/sql"
-	"github.com/sunil206b/items_api/model"
+	"github.com/sunil206b/items_api/src/model"
 	"github.com/sunil206b/store_utils_go/errors"
 	"net/http"
 )

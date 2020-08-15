@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/olivere/elastic"
-	"github.com/sunil206b/items_api/model"
-	"github.com/sunil206b/items_api/repo"
+	"github.com/sunil206b/items_api/src/model"
+	"github.com/sunil206b/items_api/src/repo"
 	"github.com/sunil206b/store_utils_go/errors"
 	"github.com/sunil206b/store_utils_go/logger"
 )
@@ -24,13 +24,13 @@ type IItemService interface {
 }
 
 type itemService struct {
-	repo repo.IItemsRepo
+	repo   repo.IItemsRepo
 	client *elastic.Client
 }
 
 func NewItemService(db *sql.DB, esClient *elastic.Client) IItemService {
 	return &itemService{
-		repo: repo.NewItemRepo(db),
+		repo:   repo.NewItemRepo(db),
 		client: esClient,
 	}
 }

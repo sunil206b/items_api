@@ -2,8 +2,8 @@ package app
 
 import (
 	"database/sql"
-	"github.com/sunil206b/items_api/controller"
-	"github.com/sunil206b/items_api/driver"
+	"github.com/sunil206b/items_api/src/controller"
+	"github.com/sunil206b/items_api/src/driver"
 	"net/http"
 )
 
